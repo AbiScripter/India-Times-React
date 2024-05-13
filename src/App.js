@@ -1,25 +1,11 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+const API_KEY = `a6eb36a186969ed8b33a82f908bdb58e`;
+const headUrl = `https://gnews.io/api/v4/search?q=`;
+const country = "in"; //INDIA
+const headlinesUrl = `https://gnews.io/api/v4/top-headlines?country=${country}&max=10&lang=en&token=${API_KEY}`;
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <div className="App">HELLO</div>;
 }
 
 export default App;
