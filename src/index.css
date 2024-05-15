@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --primary: #f9f4ed;
   --secondary: #eaeaea;
@@ -8,4 +12,8 @@
 body,
 input {
   font-family: "Poppins", sans-serif;
+}
+
+.mode-transition {
+  transition: background-color 0.3s ease-in-out, color 0.5s ease-in-out;
 }
