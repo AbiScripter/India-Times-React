@@ -1,18 +1,18 @@
 import React from "react";
-
-const CategoryTabs = ({ category, setCategory }) => {
+//top, general, world, nation, business, technology, entertainment, sports, science and health.
+const CategoryTabs = ({ category, handleCategory }) => {
   const categories = [
-    "general",
+    "top",
+    "world",
     "business",
+    "politics",
     "technology",
     "entertainment",
     "sports",
     "science",
     "health",
   ];
-  const handleCategory = (cat) => {
-    setCategory(cat);
-  };
+
   return (
     <div className="flex gap-2 mt-5 sm:flex-wrap overflow-auto">
       {categories.map((cat) => (
