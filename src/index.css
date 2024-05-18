@@ -2,13 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #f9f4ed;
-  --secondary: #eaeaea;
-  --primary--dark: #af695c;
-  --secondary--dark: #2a2a2a;
-}
-
 body,
 input {
   font-family: "Poppins", sans-serif;

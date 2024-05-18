@@ -35,7 +35,6 @@ function App() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      // const response = await axios.get(`http://localhost:8000/articles`);
       const response = await axios.get(
         `https://newsdata.io/api/1/news?apikey=${api_key}&language=en&country=${country}&category=${category}`
       );
@@ -68,6 +67,7 @@ function App() {
     }
   }, [category]);
 
+  //!to load more articles
   const loadMore = async () => {
     try {
       setIsLoading(true);
@@ -133,23 +133,6 @@ function App() {
           ))}
         </div>
       )}
-
-      {/* Load more button */}
-      {/* <div className="mt-10 w-full bg-burgundy flex justify-center py-2  ">
-        {!data[category]?.isCompleted ? (
-          <button
-            className="hover:text-beige border px-2 rounded-full"
-            onClick={handleLoadMore}
-          >
-            Load More Articles
-          </button>
-        ) : (
-          <p className="p-2">
-            You have reached the end of the available {category} articles for
-            now. Please check back after a while for new content
-          </p>
-        )}
-      </div> */}
 
       <div className="mt-10 w-full bg-burgundy flex justify-center py-2  ">
         <button
