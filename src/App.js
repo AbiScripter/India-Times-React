@@ -1,5 +1,4 @@
 import axios from "axios";
-import "./App.css";
 import { useEffect, useState } from "react";
 import Loader from "./components/Loader";
 import CategoryTabs from "./components/CategoryTabs";
