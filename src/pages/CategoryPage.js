@@ -11,7 +11,7 @@ const api_key = "pub_44179f13e7f1d11c54f74ef34d7f2b17b6165";
 const country = "in"; //INDIA
 // `https://newsdata.io/api/1/news?apikey=${api_key}&language=en&country=${country}&category=${category}`;
 
-const CategoryPage = memo(({ currTab, setCurrTab }) => {
+const CategoryPage = memo(() => {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState("top");
@@ -23,7 +23,6 @@ const CategoryPage = memo(({ currTab, setCurrTab }) => {
   };
 
   const handleCategory = (cat) => {
-    setCurrTab("category");
     setCategory(cat);
   };
 
@@ -88,21 +87,23 @@ const CategoryPage = memo(({ currTab, setCurrTab }) => {
       setIsLoading(false);
     }
   };
-
+  //
   console.log(data);
 
   return (
-    <div className="App  p-10 bg-beige dark:bg-dark-brown dark:text-beige">
-      {/* <Navbar /> */}
+    <div className="p-10 bg-beige dark:bg-dark-brown dark:text-beige">
+      <Navbar />
 
       <div className="text-4xl sm:text-6xl md:text-8xl text-center">
         India Times
       </div>
+
       {/* <div className="text-4xl">Latest News</div> */}
       <CategoryTabs category={category} handleCategory={handleCategory} />
-      <SearchPage currTab={currTab} setCurrTab={setCurrTab} />
 
-      {currTab === "category" ? (
+      {isLoading ? (
+        <Loader />
+      ) : (
         <>
           <div className="mt-10 min-h-[90vh] shadow-2xl rounded-xl dark:bg-slate-700 grid sm:grid-cols-2 lg:grid-cols-12 gap-1">
             {data[category]?.articles.map((article, index) => (
@@ -119,8 +120,6 @@ const CategoryPage = memo(({ currTab, setCurrTab }) => {
             </button>
           </div>
         </>
-      ) : (
-        ""
       )}
     </div>
   );
