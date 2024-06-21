@@ -3,124 +3,103 @@ import { memo, useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import CategoryTabs from "../components/CategoryTabs";
 import ArticleCard from "../components/ArticleCard";
-import Navbar from "../components/Navbar";
-import SearchPage from "./SearchPage";
+import {
+  addCategoryArticles,
+  updateCategoryPageId,
+} from "../Slices/CategoryPageSlice";
+import { useDispatch, useSelector } from "react-redux";
+const API_KEY = "pub_44179f13e7f1d11c54f74ef34d7f2b17b6165";
 
 //!newsdata.io
-const api_key = "pub_44179f13e7f1d11c54f74ef34d7f2b17b6165";
-const country = "in"; //INDIA
 // `https://newsdata.io/api/1/news?apikey=${api_key}&language=en&country=${country}&category=${category}`;
 
 const CategoryPage = memo(() => {
-  const [data, setData] = useState({});
+  const categoryArticles = useSelector(
+    (state) => state.categoryPage.categoryArticles
+  );
+  const categoryPageId = useSelector(
+    (state) => state.categoryPage.categoryPageId
+  );
+
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [category, setCategory] = useState("top");
 
-  const handleLoadMore = () => {
-    console.log("ommala dei");
-    // data[category].pageNumber = data[category].pageNumber + 1;
-    loadMore();
-  };
+  //function to fetcharticles, if it fetches for the first time we put pageid as 1 else put the pageid
+  //this is done to change the url
+  async function fetchArticles(pageId = 1) {
+    let url;
+    if (pageId === 1) {
+      url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&language=en&category=${category}&country=in`;
+    } else {
+      url = `https://newsdata.io/api/1/latest?apikey=${API_KEY}&language=en&category=${category}&page=${pageId}&country=in`;
+    }
 
-  const handleCategory = (cat) => {
-    setCategory(cat);
-  };
-
-  const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `https://newsdata.io/api/1/news?apikey=${api_key}&language=en&country=${country}&category=${category}`
+      const response = await axios.get(url);
+      console.log(response);
+      if (response.statusText !== "OK") {
+        throw new Error("soemething went wrong with searching ");
+      }
+      const result = response.data;
+      console.log(result);
+      //updating the ids and articles to the store
+      dispatch(updateCategoryPageId(result.nextPage));
+      dispatch(
+        addCategoryArticles({ category: category, payload: result.results })
       );
-      const filtered = response.data.results.filter(
-        (article) => article.image_url !== null
-      );
-
-      // console.log(filtered);
-
-      setData((prevData) => ({
-        ...prevData,
-        [category]: {
-          articles: filtered,
-          nextPageId: response.data.nextPage,
-        },
-      }));
     } catch (error) {
-      console.log(error);
+      setError(error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  //!fetch data when category changes
+  function handleLoadMore() {
+    fetchArticles(categoryPageId);
+  }
+
+  function handleCategory(cat) {
+    setCategory(cat);
+  }
+
   useEffect(() => {
-    //if data in that category already exists don't fetch, use the previous data store in data state
-    if (!data[category]) {
-      fetchData();
+    //if articles in that category already exists dont fetch when category changes
+    if (categoryArticles[category].length === 0) {
+      fetchArticles();
     }
   }, [category]);
 
-  //!to load more articles
-  const loadMore = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get(
-        `https://newsdata.io/api/1/news?apikey=${api_key}&language=en&country=${country}&category=${category}&page=${`${data[category]?.nextPageId}`}`
-      );
-      console.log(response);
-      const filtered = response.data.results.filter(
-        (article) => article.image_url !== null
-      );
-
-      // console.log(filtered);
-
-      setData((prevData) => ({
-        ...prevData,
-        [category]: {
-          articles: [...prevData[category]?.articles, ...filtered],
-          nextPageId: response.data.nextPage,
-        },
-      }));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  //
-  console.log(data);
+  //boundary cases
+  if (error) {
+    return <h2>{error.message}</h2>;
+  } else if (isLoading) {
+    return <Loader />;
+  }
 
   return (
-    <div className="p-10 bg-beige dark:bg-dark-brown dark:text-beige">
-      <Navbar />
-
-      <div className="text-4xl sm:text-6xl md:text-8xl text-center">
-        India Times
-      </div>
-
-      {/* <div className="text-4xl">Latest News</div> */}
+    <div className="p-5 dark:text-beige">
+      {/* Category Tabs */}
       <CategoryTabs category={category} handleCategory={handleCategory} />
 
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="mt-10 min-h-[90vh] shadow-2xl rounded-xl dark:bg-slate-700 grid sm:grid-cols-2 lg:grid-cols-12 gap-1">
-            {data[category]?.articles.map((article, index) => (
-              <ArticleCard key={index} index={index} article={article} />
-            ))}
-          </div>
+      {/* Article Cards */}
+      <div className="mt-10 bg-beige dark:bg-dark-brown p-5 min-h-[90vh] shadow-2xl rounded-lg grid sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+        {categoryArticles[category]?.map((article, index) => (
+          <ArticleCard key={index} article={article} />
+        ))}
+      </div>
 
-          <div className="mt-10 w-full bg-burgundy flex justify-center py-2  ">
-            <button
-              className="hover:text-beige border px-2 rounded-full"
-              onClick={handleLoadMore}
-            >
-              Load More Articles
-            </button>
-          </div>
-        </>
-      )}
+      {/* Load more */}
+      <div className="mt-10 w-full bg-burgundy flex justify-center py-2 rounded-lg">
+        <button
+          className="text-dark-brown hover:text-beige border px-2 rounded-lg"
+          onClick={handleLoadMore}
+        >
+          Load More Articles
+        </button>
+      </div>
     </div>
   );
 });

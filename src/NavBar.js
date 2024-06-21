@@ -1,32 +1,31 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import lightIcon from "../assets/9104141_sun_bright_brightness_light mode_icon.svg";
-import darkIcon from "../assets/9104269_night_night mode_moon_crescent_dark mode_icon.svg";
+import lightIcon from "./assets/9104141_sun_bright_brightness_light mode_icon.svg";
+import darkIcon from "./assets/9104269_night_night mode_moon_crescent_dark mode_icon.svg";
 
-const Navbar = () => {
+const NavBar = () => {
   const [dark, setDark] = useState(false);
 
   const darkModeHandler = () => {
     setDark(!dark);
     document.body.classList.toggle("dark");
   };
-  return (
-    <div className="flex align-middle justify-between mb-5">
-      {/* dark light mode */}
 
-      <div className="text-sm sm:text-lg mt-1">
+  return (
+    <div className="flex align-middle justify-between mb-5 p-5">
+      {/* dark light mode */}
+      <div className="text-sm sm:text-lg mt-1 ">
         <NavLink
           className={({ isActive }) =>
-            isActive ? "text-burgundy font-bold mr-3" : "mr-3"
+            isActive ? "text-burgundy font-bold mr-3 text-xl" : "mr-3"
           }
           to="/"
-          activeClassName="text-burgundy"
         >
           Category
         </NavLink>
         <NavLink
           className={({ isActive }) =>
-            isActive ? "text-burgundy font-bold" : ""
+            isActive ? "text-burgundy font-bold text-xl" : ""
           }
           to="/search"
         >
@@ -45,4 +44,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavBar;

@@ -19,7 +19,7 @@ const CategoryTabs = ({ category, handleCategory }) => {
         <div
           onClick={() => handleCategory(cat)}
           key={cat}
-          className={`cursor-pointer hover:text-burgundy border px-2 py-1 rounded-full ${
+          className={`cursor-pointer hover:text-burgundy border px-4 py-1 rounded-lg ${
             category === cat ? "text-burgundy font-bold" : ""
           }`}
         >
