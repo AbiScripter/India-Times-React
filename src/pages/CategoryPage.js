@@ -24,18 +24,13 @@ const CategoryPage = memo(() => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [category, setCategory] = useState("top");
+  const [activeCategory, setActiveCategory] = useState("top");
 
-  //function to fetcharticles, if it fetches for the first time we put pageid as 1 else put the pageid
-  //this is done to change the url
-  async function fetchArticles(pageId = 1) {
-    let url;
-    if (pageId === 1) {
-      url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&language=en&category=${category}&country=in`;
-    } else {
-      url = `https://newsdata.io/api/1/latest?apikey=${API_KEY}&language=en&category=${category}&page=${pageId}&country=in`;
-    }
+  // Initially, we fetch articles for a category without a pageId, since it's the first time fetching for that category.
+  // Once articles are fetched, we get a nextPageId for pagination.
+  // When the user clicks 'Load More,' we use that nextPageId to fetch the subsequent set of articles for the same category.
 
+  async function fetchArticles(url) {
     try {
       setIsLoading(true);
       const response = await axios.get(url);
@@ -46,9 +41,12 @@ const CategoryPage = memo(() => {
       const result = response.data;
       console.log(result);
       //updating the ids and articles to the store
-      dispatch(updateCategoryPageId(result.nextPage));
+      dispatch(updateCategoryPageId(result.nextPage)); //result.nextPage holds the id for the next page
       dispatch(
-        addCategoryArticles({ category: category, payload: result.results })
+        addCategoryArticles({
+          category: activeCategory,
+          fetchedArticles: result.results, //result.results hold articles data
+        })
       );
     } catch (error) {
       setError(error);
@@ -58,19 +56,22 @@ const CategoryPage = memo(() => {
   }
 
   function handleLoadMore() {
-    fetchArticles(categoryPageId);
+    let url = `https://newsdata.io/api/1/latest?apikey=${API_KEY}&language=en&category=${activeCategory}&page=${categoryPageId}&country=in`;
+    fetchArticles(url); //passing the url with pageId coz that category already have articles(fetched when we switch between category...useEffect block takes care of that)
   }
 
   function handleCategory(cat) {
-    setCategory(cat);
+    setActiveCategory(cat);
   }
 
   useEffect(() => {
-    //if articles in that category already exists dont fetch when category changes
-    if (categoryArticles[category].length === 0) {
-      fetchArticles();
+    //when switching between categories,if articles in that category already exists dont fetch (this reduces unnecessary fetch calls)
+    //only fetch in that category if user clicks load more (which is handled by handleMore function)
+    if (categoryArticles[activeCategory].length === 0) {
+      let url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&language=en&category=${activeCategory}&country=in`;
+      fetchArticles(url); //intial fetch for that category when that category not fetched before(passing the url without pageId)
     }
-  }, [category]);
+  }, [activeCategory]);
 
   //boundary cases
   if (error) {
@@ -82,11 +83,14 @@ const CategoryPage = memo(() => {
   return (
     <div className="p-5 dark:text-beige">
       {/* Category Tabs */}
-      <CategoryTabs category={category} handleCategory={handleCategory} />
+      <CategoryTabs
+        activeCategory={activeCategory}
+        handleCategory={handleCategory}
+      />
 
       {/* Article Cards */}
       <div className="mt-10 bg-beige dark:bg-dark-brown p-5 min-h-[90vh] shadow-2xl rounded-lg grid sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-        {categoryArticles[category]?.map((article, index) => (
+        {categoryArticles[activeCategory]?.map((article, index) => (
           <ArticleCard key={index} article={article} />
         ))}
       </div>

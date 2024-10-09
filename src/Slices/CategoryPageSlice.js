@@ -20,10 +20,10 @@ const CategoryPage = createSlice({
   initialState: initialState,
   reducers: {
     addCategoryArticles: (state, action) => {
-      const { category, payload } = action.payload;
+      const { category, fetchedArticles } = action.payload;
       state.categoryArticles[category] = [
         ...state.categoryArticles[category],
-        ...payload,
+        ...fetchedArticles,
       ];
     },
     updateCategoryPageId: (state, action) => {

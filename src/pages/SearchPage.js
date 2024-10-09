@@ -36,7 +36,7 @@ const SearchPage = memo(() => {
       alert("Type something to search");
       return;
     }
-    console.log(queryRef.current.value);
+    // console.log(queryRef.current.value);
     dispatch(updateSearchQuery(queryRef.current.value));
     let url = `https://newsdata.io/api/1/latest?&language=en&apikey=${API_KEY}&q=${queryRef.current.value}`;
     fetchData(url, "firsttime");
@@ -47,13 +47,13 @@ const SearchPage = memo(() => {
       setIsLoading(true);
       const response = await axios.get(url);
       if (response.statusText !== "OK") {
-        throw new Error("soemething went wrong with searching ");
+        throw new Error("soemething went wrong with searching");
       }
       const result = response.data;
       dispatch(updateSearchPageId(result.nextPage));
 
-      //if data fetched for  first time it updates the state of articles
-      //else ,if load more clicked it add the results to the previously stored article in the state
+      //if data fetched for the first time it updates with newArticles
+      //else, if load more clicked it the currently fetched articles combines with the previously fetched articles
       if (type === "firsttime") {
         dispatch(getNewSearchArticles(result.results));
       } else {

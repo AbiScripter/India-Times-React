@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import lightIcon from "./assets/9104141_sun_bright_brightness_light mode_icon.svg";
-import darkIcon from "./assets/9104269_night_night mode_moon_crescent_dark mode_icon.svg";
+import lightIcon from "../assets/9104141_sun_bright_brightness_light mode_icon.svg";
+import darkIcon from "../assets/9104269_night_night mode_moon_crescent_dark mode_icon.svg";
 
 const NavBar = () => {
   const [dark, setDark] = useState(false);

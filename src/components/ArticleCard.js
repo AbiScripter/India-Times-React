@@ -32,7 +32,7 @@ import React from "react";
 // };
 
 const ArticleCard = ({ article }) => {
-  //if the article doesn't have image, don't render
+  //if the article doesn't have image or description, don't render
   if (!article.image_url || !article.description) return null;
 
   return (
